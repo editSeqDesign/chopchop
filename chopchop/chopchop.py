@@ -2799,7 +2799,7 @@ def tx_relative_coordinates(visCoords, tx_id, start, end):
 
 def main():
     # Parse arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser() 
     parser.add_argument("-Target", "--targets", type=str, help="Target genes or regions", required=True)
     parser.add_argument("-r", "--gRVD", default="NH ", dest="g_RVD", action="store_const", const="NN ",  help="Use RVD 'NN' instead of 'NH' for guanine nucleotides. 'NH' appears to be more specific than 'NN' but the choice depends on assembly kit.")
     parser.add_argument("-D", "--database", help="Connect to a chopchop database to retrieve gene: user_name:passwd@host/database", metavar="DATABASE", dest="database")
@@ -2854,7 +2854,7 @@ def main():
 
     args = parser.parse_args()
 
-
+      
     print("--------------:" , os.getcwd(),args.config)
     print("content",os.listdir("."))
       
