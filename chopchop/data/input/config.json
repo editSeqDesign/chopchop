@@ -12,8 +12,7 @@
     "bit_datat": "data/input/2bit/",
     "THREADS": 8,
     "chopchop_params": {
-        "PAM": "NGG",
-        "THREADS": 8,
+        "PAM": "NGG",  
         "genome_name": "Corynebacterium_glutamicum",
         "guideSize": 20,
         "maxMismatches": 3,

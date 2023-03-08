@@ -10,12 +10,7 @@ import subprocess
 from Bio import SeqIO
 import multiprocessing as mp
    
-# from loguru import logger
-# logger.add('out.log')
-# logger.add(sys.stdout, level='INFO', format='{message}')   
-# from pandarallel import pandarallel  
-# pandarallel.initialize(nb_workers=80)
-    
+ 
 def excecute_one_chopchop(env,chopchop_params,parent_output):
     
     env = env
@@ -138,8 +133,10 @@ def write_config(config,input_path,ref_genome,chopchop_params,output):
     #-------------------------------------------
     config['genome_path'] = ref_genome
     config['chopchop_params'] = chopchop_params
-    config['info_path'] = input_path
+    config['info_path'] = input_path 
     config['output_path'] = output
+
+
     #-------------------------------------------
 
     #-----------------------------------------
@@ -148,7 +145,6 @@ def write_config(config,input_path,ref_genome,chopchop_params,output):
     else:
         config['PATH']['BOWTIE'] = 'bowtie'
         config['PATH']['TWOBITTOFA'] = 'twoBitToFa'
-
         config['PATH']['TWOBIT_INDEX_DIR'] = chopchop_workdir +'/'+ config['PATH']['TWOBIT_INDEX_DIR']
         config['PATH']['PRIMER3'] = chopchop_workdir +'/'+ config['PATH']['PRIMER3']
         config['PATH']['BOWTIE_INDEX_DIR'] = chopchop_workdir +'/'+ config['PATH']['BOWTIE_INDEX_DIR'] +'/'+ config['chopchop_params']['genome_name']
@@ -214,7 +210,7 @@ def extract_seq_from_genome(genome,gene_id,start=0,end=0):
 
 def filter(df,genome):
     df = df[df['region'] != '']
-    df['chromosome_seq_len'] = df.region.parallel_apply(lambda x: len(extract_seq_from_genome(genome=genome, gene_id=x.split(":")[0])))
+    df['chromosome_seq_len'] = df.region.apply(lambda x: len(extract_seq_from_genome(genome=genome, gene_id=x.split(":")[0])))
     def work(region, chromosome_seq_len):
             target_coords=region.split(":")[1]
             target_coords = int(target_coords.split('-')[0]),int(target_coords.split('-')[1])
@@ -224,13 +220,13 @@ def filter(df,genome):
                 return 'no'
             else:
                 return 'yes'
-    df['tag'] = df.parallel_apply(lambda x: work(x['region'], x['chromosome_seq_len']), axis=1)
+    df['tag'] = df.apply(lambda x: work(x['region'], x['chromosome_seq_len']), axis=1)
 
     df = df[df['tag'] == 'yes']
     return df
 
 
-
+   
 
 # 定义一个函数，用于在多进程中调用
 def process_region(params):
@@ -246,21 +242,20 @@ def main(event):
 
     #
     base_path = os.path.abspath(os.path.dirname(__file__)) + '/'
-
-    print('hjdsgfjdgsjghdjshjk')
+ 
     print(base_path)
     print(os.listdir(base_path))    
-
 
     #parse event
     input_path = event["input_file_path"]
     ref_genome = event["ref_genome"] 
     chopchop_params = event["chopchop_config"]
     output = event["chopchop_workdir"] 
-
+    chopchop_params['genome_name'] = splitext(basename(ref_genome))[0]
 
     #read config
     chopchop_local_config = base_path + '/data/input/' + 'config.json'
+
     with open(chopchop_local_config, "r") as f:
         data = json.load(f)
 
@@ -274,6 +269,8 @@ def main(event):
     #
     
     df = pd.read_csv(input_path)
+    #过滤无用信息
+    df = filter(df,ref_genome)   
 
     print(df.columns)
   
@@ -306,20 +303,30 @@ def main(event):
     print(output)
     if exists(output +'/'+ 'temp'):
         shutil.rmtree(output +'/'+ 'temp')
-   
     return output + '/' + 'sgRNA.csv'
 
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--input', '-i', help='input params file', required=True) 
-    args = parser.parse_args()
-    input_path =  args.input
-    with open(input_path, "r") as f:
-        data = json.load(f)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--input', '-i', help='input params file', required=True) 
+    # args = parser.parse_args()
+    # input_path =  args.input  
+
+       
+    event = {
+        "input_file_path":"/home/yanghe/program/chopchop/chopchop/data/input/Corynebacterium_glutamicum_info_input.csv",
+        "ref_genome":"/home/yanghe/program/chopchop/chopchop/data/input/genome/GCA_000011325.1_ASM1132v1_genomic.fna",
+        "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
+        "chopchop_config":{
+            "PAM": "NGG", 
+            "guideSize": 20,
+            "maxMismatches": 3,
+            "scoringMethod": "DOENCH_2014"
+        }
+    }
     
-    main(data)
+    main(event)
 
 
 
