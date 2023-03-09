@@ -267,7 +267,6 @@ def main(event):
 
 
     #
-    
     df = pd.read_csv(input_path)
     #过滤无用信息
     df = filter(df,ref_genome)   
@@ -282,6 +281,7 @@ def main(event):
     #parallel processing
     
     temp = df.region.apply(lambda x: call_chopchop(output,chopchop_params,x))
+
     # pool = mp.Pool()
     #   # 使用map函数在多个进程中调用process_region函数
     # results = pool.map(process_region, [(output,chopchop_params, region) for region in df.region])
@@ -292,7 +292,13 @@ def main(event):
 
 
     sgRNA_df = pd.concat([row for i,row in temp.items()])
-    sgRNA_df.to_csv(output+'/'+'sgRNA.csv',index=False)
+
+    sgRNA_df = pd.merge(df[['name','region']],sgRNA_df,left_on=['region'],right_on=['Region'],how='inner')
+    sgRNA_df.drop(columns=['region'],inplace=True)
+    sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
+
+
+    sgRNA_df.to_csv(output+'/'+'sgRNA.csv',index=False)   
      
     end_time = time.time()
     print("Execution time:", end_time - start_time, "seconds")     
@@ -303,7 +309,7 @@ def main(event):
     print(output)
     if exists(output +'/'+ 'temp'):
         shutil.rmtree(output +'/'+ 'temp')
-    return output + '/' + 'sgRNA.csv'
+    return output + '/' + 'sgRNA.csv'  
 
 
 
