@@ -3,9 +3,9 @@
 Author: yangchunhe
 Date: 2023-02-16 05:38:18
 LastEditors: wangruoyu
-LastEditTime: 2023-02-16 07:22:11
+LastEditTime: 2023-03-09 02:10:45
 Description: file content
-FilePath: /chopchop_crispr_cdk/lambda/data_preprocessing/app.py
+FilePath: /chopchop_crispr_cdk/lambda/chopchop/app.py
 '''
 import os
 import sys
@@ -71,10 +71,11 @@ def lambda_handler(event,context):
     print(event)
     try:
         # 读写路径
-        jobid = str(uuid.uuid4())
+        jobid = event["jobid"]
         workdir = f'/tmp/{jobid}'
         print(f'working dir: {workdir}')
-        os.mkdir(workdir)
+        if not os.path.exists(workdir):
+            os.mkdir(workdir)
         os.chdir(workdir)
         event["chopchop_workdir"] = workdir
         
@@ -89,12 +90,12 @@ def lambda_handler(event,context):
         output_file = mn.main(event)
         
         # 上传结果文件
-        output_file_key = f"result/{jobid}/{output_file.split('/')[-1]}"
-        s3.meta.client.upload_file(output_file, result_bucket, output_file_key)
+        output_file_key = f"result/{jobid}/chopchop/{output_file.split('/')[-1]}"
+        s3.meta.client.upload_file(output_file, result_bucket, output_file_key,ExtraArgs={'ACL': "public-read"})
         print(f'upload result file: {output_file_key} ')
         return {
             "statusCode":200,
-            "data":output_file
+            "output_file":f"s3://{result_bucket}/{output_file_key}"
         }
     except Exception as e:
         print(e)
