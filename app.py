@@ -3,7 +3,7 @@
 Author: yangchunhe
 Date: 2023-02-16 05:38:18
 LastEditors: wangruoyu
-LastEditTime: 2023-03-09 02:10:45
+LastEditTime: 2023-03-13 02:25:45
 Description: file content
 FilePath: /chopchop_crispr_cdk/lambda/chopchop/app.py
 '''
@@ -24,6 +24,7 @@ import main as mn
 
 
 result_bucket = os.environ["s3Result"]
+reference_bucket = os.environ["s3Reference"]
 s3 = boto3.resource('s3')
 
 def download_s3_file(s3_file, workdir):
@@ -81,6 +82,8 @@ def lambda_handler(event,context):
         
         #下载数据 并重置参数
         event["input_file_path"] = download_s3_file(event["input_file_path"],workdir)
+        if event["ref_genome"].startswith('reference/'):
+                event["ref_genome"] = f"s3://{reference_bucket}/{event['ref_genome']}" 
         event["ref_genome"] = download_s3_file(event["ref_genome"],workdir)
         event["chopchop_config"] = event["chopchop_config"]
           
