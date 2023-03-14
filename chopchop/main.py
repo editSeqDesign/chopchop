@@ -238,6 +238,21 @@ def process_region(params):
 
 
 
+#生成前端需要的json
+def sgRNAdf_to_jsion(sgRNA):
+   
+    li = []
+    def work(x):
+    #     print(x['Region'])
+        name = list(x['Name'])[0]
+        cc = list(x.T.to_dict().values())
+        temp_dict = {}
+        temp_dict.update({'Name':name,'Detail':cc})
+        li.append(temp_dict)
+    sgRNA.groupby(by='Region').apply(lambda x: work(x))
+    return li
+
+
 def main(event):
 
     #
@@ -296,10 +311,16 @@ def main(event):
     sgRNA_df = pd.merge(df[['name','region']],sgRNA_df,left_on=['region'],right_on=['Region'],how='inner')
     sgRNA_df.drop(columns=['region'],inplace=True)
     sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
+    # sgRNA_df.rename(columns={'Name':'ID'},inplace=True)
 
+    sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3"]]
+
+    #输出json
+    li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)
+    with open(output+"/"+"sgRNA.json", 'w') as input_json:
+        json.dump(li_sgRNA, input_json, indent=4, ensure_ascii=False)
 
     sgRNA_df.to_csv(output+'/'+'sgRNA.csv',index=False)   
-     
     end_time = time.time()
     print("Execution time:", end_time - start_time, "seconds")     
     # --------------------------------------------------------
