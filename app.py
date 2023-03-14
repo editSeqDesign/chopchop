@@ -3,7 +3,7 @@
 Author: yangchunhe
 Date: 2023-02-16 05:38:18
 LastEditors: wangruoyu
-LastEditTime: 2023-03-13 02:25:45
+LastEditTime: 2023-03-14 02:08:26
 Description: file content
 FilePath: /chopchop_crispr_cdk/lambda/chopchop/app.py
 '''
@@ -93,12 +93,23 @@ def lambda_handler(event,context):
         output_file = mn.main(event)
         
         # 上传结果文件
+        # csv文件
         output_file_key = f"result/{jobid}/chopchop/{output_file.split('/')[-1]}"
         s3.meta.client.upload_file(output_file, result_bucket, output_file_key,ExtraArgs={'ACL': "public-read"})
         print(f'upload result file: {output_file_key} ')
+        
+        # json文件
+        output_file_json = output_file.replace('.csv','.json')
+        output_file_json_key = f"result/{jobid}/chopchop/{output_file_json.split('/')[-1]}"
+        s3.meta.client.upload_file(output_file_json, result_bucket, output_file_json_key,ExtraArgs={'ACL': "public-read"})
+        print(f'upload result file: {output_file_json_key} ')
+        
         return {
             "statusCode":200,
-            "output_file":f"s3://{result_bucket}/{output_file_key}"
+            "output_file":[
+                f"s3://{result_bucket}/{output_file_json_key}",
+                f"s3://{result_bucket}/{output_file_key}"
+            ]
         }
     except Exception as e:
         print(e)
