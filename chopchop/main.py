@@ -244,7 +244,7 @@ def sgRNAdf_to_jsion(sgRNA):
     def work(x):
     #     print(x['Region'])
         name = list(x['Name'])[0]
-        x = x.drop(columns='Name')
+       
         cc = list(x.T.to_dict().values())
         temp_dict = {}
         temp_dict.update({'Name':name,'Detail':cc})
