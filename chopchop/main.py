@@ -240,11 +240,11 @@ def process_region(params):
 
 #生成前端需要的json
 def sgRNAdf_to_jsion(sgRNA):
-   
     li = []
     def work(x):
     #     print(x['Region'])
         name = list(x['Name'])[0]
+        x = x.drop(columns='Name')
         cc = list(x.T.to_dict().values())
         temp_dict = {}
         temp_dict.update({'Name':name,'Detail':cc})
@@ -293,7 +293,7 @@ def main(event):
     # ------------------------------------------------------
     import time
     start_time = time.time()
-    #parallel processing
+    #parallel processing  
     
     temp = df.region.apply(lambda x: call_chopchop(output,chopchop_params,x))
 
@@ -304,10 +304,7 @@ def main(event):
     # # 关闭进程池
     # pool.close()
 
-
-
     sgRNA_df = pd.concat([row for i,row in temp.items()])
-
     sgRNA_df = pd.merge(df[['name','region']],sgRNA_df,left_on=['region'],right_on=['Region'],how='inner')
     sgRNA_df.drop(columns=['region'],inplace=True)
     sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
@@ -333,7 +330,6 @@ def main(event):
     return output + '/' + 'sgRNA.csv'  
 
 
-
 if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.add_argument('--input', '-i', help='input params file', required=True) 
@@ -342,8 +338,8 @@ if __name__ == '__main__':
 
        
     event = {
-        "input_file_path":"/home/yanghe/program/chopchop/chopchop/data/input/Corynebacterium_glutamicum_info_input.csv",
-        "ref_genome":"/home/yanghe/program/chopchop/chopchop/data/input/genome/GCA_000011325.1_ASM1132v1_genomic.fna",
+        "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
+        "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
             "PAM": "NGG", 
@@ -354,6 +350,7 @@ if __name__ == '__main__':
     }
     
     main(event)
+   
 
 
 
