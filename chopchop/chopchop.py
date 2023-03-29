@@ -2822,8 +2822,8 @@ def main():
     parser.add_argument("-f", "--fivePrimeEnd", default="NN", type=str, help="Specifies the requirement of the two nucleotides 5' end of the CRISPR guide: A/C/G/T/N. Default: NN.")
     parser.add_argument("-n", "--enzymeCo", default="N", metavar="ENZYME_CO", help="The restriction enzyme company for TALEN spacer.")
     parser.add_argument("-R", "--minResSiteLen", type=int, default=4, help="The minimum length of the restriction enzyme.")
-    parser.add_argument("-v", "--maxMismatches", default=3, type=int, choices=[0, 1, 2, 3], metavar="MAX_MISMATCHES", help="The number of mismatches to check across the sequence.")
-    parser.add_argument("-m", "--maxOffTargets", metavar="MAX_HITS", help="The maximum number of off targets allowed.")
+    parser.add_argument("-v", "--maxMismatches", default=3, type=int, choices=[0, 1, 2, 3, 4], metavar="MAX_MISMATCHES", help="The number of mismatches to check across the sequence.")
+    parser.add_argument("-m", "--maxOffTargets", metavar="MAX_HITS", help="The maximum number of off targets allowed.")   
     parser.add_argument("-M", "--PAM", type=str, help="The PAM motif.")
     parser.add_argument("-o", "--outputDir", default="./", metavar="OUTPUT_DIR", help="The output directory. Default is the current directory.")
     parser.add_argument("-F", "--fasta", default=False, action="store_true", help="Use FASTA file as input rather than gene or genomic region.")
@@ -3266,8 +3266,7 @@ def main():
     sortedOutput = sortOutput(results)
 
     # Write individual results to file
-    listOfClusters = writeIndividualResults(args.outputDir, args.maxOffTargets, sortedOutput, args.guideSize, args.MODE, cluster, args.limitPrintResults, args.offtargetsTable)
-
+    # listOfClusters = writeIndividualResults(args.outputDir, args.maxOffTargets, sortedOutput, args.guideSize, args.MODE, cluster, args.limitPrintResults, args.offtargetsTable)
     if args.makePrimers:
         if args.fasta:
             make_primers_fasta(sortedOutput, args.outputDir, args.primerFlanks, args.displaySeqFlanks, args.genome, args.limitPrintResults, CONFIG["PATH"]["BOWTIE_INDEX_DIR"], fastaSequence, args.primer3options, args.guidePadding, args.enzymeCo, args.minResSiteLen, "sequence", args.maxOffTargets)

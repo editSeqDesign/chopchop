@@ -342,7 +342,7 @@ if __name__ == '__main__':
         "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
-            "PAM": "NGG", 
+            "PAM": "NG", 
             "guideSize": 20,
             "maxMismatches": 3,
             "scoringMethod": "DOENCH_2014"
