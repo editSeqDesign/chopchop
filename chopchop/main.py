@@ -277,7 +277,7 @@ def main(event):
     #write config to temp
     tem_config = write_config(data,input_path,ref_genome,chopchop_params,output)
     print('temp中的config位置',tem_config)
-
+   
     print("output内容",os.listdir(output))
 
 
@@ -310,7 +310,7 @@ def main(event):
     sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
     # sgRNA_df.rename(columns={'Name':'ID'},inplace=True)
 
-    sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3"]]
+    sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]
 
     #输出json
     li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)
@@ -336,16 +336,18 @@ if __name__ == '__main__':
     # args = parser.parse_args()
     # input_path =  args.input  
 
-       
+    "XU_2015", "DOENCH_2014", "DOENCH_2016", "MORENO_MATEOS_2015", "CHARI_2015", "G_20"
+
+
     event = {
         "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
         "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
-            "PAM": "NG", 
+            "PAM": "NNNNGMTT", 
             "guideSize": 20,
             "maxMismatches": 3,
-            "scoringMethod": "DOENCH_2014"
+            "scoringMethod": "XU_2015"
         }
     }
     
