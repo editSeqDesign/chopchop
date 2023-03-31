@@ -23,6 +23,10 @@ def excecute_one_chopchop(env,chopchop_params,parent_output):
     maxMismatches = chopchop_params['maxMismatches']
     guideSize = chopchop_params['guideSize']
 
+    if int(guideSize) > 40 or int(guideSize) < 5:
+        raise ValueError('Please enter a guideSize between 5 and 40')
+    if int(maxMismatches) < 1  or int(maxMismatches) > 4:
+        raise ValueError('Please enter a maxMismatches between 1 and 4')
 
     cmd = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % \
                                     (env + '/bin/python',
@@ -206,9 +210,8 @@ def extract_seq_from_genome(genome,gene_id,start=0,end=0):
                 else:
                     return sequence
 
-
-
-def filter(df,genome):
+  
+def filter(df,genome):  
     df = df[df['region'] != '']
     df['chromosome_seq_len'] = df.region.apply(lambda x: len(extract_seq_from_genome(genome=genome, gene_id=x.split(":")[0])))
     def work(region, chromosome_seq_len):
@@ -225,8 +228,6 @@ def filter(df,genome):
     df = df[df['tag'] == 'yes']
     return df
 
-
-   
 
 # 定义一个函数，用于在多进程中调用
 def process_region(params):
@@ -275,11 +276,10 @@ def main(event):
         data = json.load(f)
 
     #write config to temp
-    tem_config = write_config(data,input_path,ref_genome,chopchop_params,output)
+    tem_config = write_config(data, input_path, ref_genome, chopchop_params, output)
     print('temp中的config位置',tem_config)
    
     print("output内容",os.listdir(output))
-
 
     #
     df = pd.read_csv(input_path)
@@ -313,14 +313,15 @@ def main(event):
     sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]
 
     #输出json
-    li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)
+    li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)  
     with open(output+"/"+"sgRNA.json", 'w') as input_json:
         json.dump(li_sgRNA, input_json, indent=4, ensure_ascii=False)
 
     sgRNA_df.to_csv(output+'/'+'sgRNA.csv',index=False)   
     end_time = time.time()
-    print("Execution time:", end_time - start_time, "seconds")     
-    # --------------------------------------------------------
+    print("Execution time:", end_time - start_time, "seconds")       
+    # --------------------------------------------------------  
+
 
     import shutil
     # remove .sam files as they take up wayyy to much space
@@ -338,21 +339,20 @@ if __name__ == '__main__':
 
     "XU_2015", "DOENCH_2014", "DOENCH_2016", "MORENO_MATEOS_2015", "CHARI_2015", "G_20"
 
-
     event = {
         "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
         "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
             "PAM": "NNNNGMTT", 
-            "guideSize": 20,
+            "guideSize": 50,
             "maxMismatches": 3,
             "scoringMethod": "XU_2015"
         }
-    }
-    
+    }   
+
     main(event)
-   
+    
 
 
 
