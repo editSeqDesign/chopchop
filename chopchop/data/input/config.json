@@ -8,7 +8,7 @@
         "PRIMER3": "primer3_core",
         "TWOBITTOFA": "twoBitToFa",
         "BOWTIE_INDEX_DIR": "data/input/ebwt/"
-    },
+    }, 
     "bit_datat": "data/input/2bit/",
     "THREADS": 8,
     "chopchop_params": {

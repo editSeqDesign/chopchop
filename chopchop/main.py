@@ -106,7 +106,6 @@ def check_create_path(config):
     genome_name = config['chopchop_params']['genome_name']
     genome_path = config['genome_path']
 
-
     #2bit
     bit_datat = config['bit_datat']
     genome_2bit ='{}{}{}'.format(bit_datat,genome_name,'.2bit')
@@ -339,19 +338,32 @@ if __name__ == '__main__':
 
     "XU_2015", "DOENCH_2014", "DOENCH_2016", "MORENO_MATEOS_2015", "CHARI_2015", "G_20"
 
-    event = {
+    event1 = {
         "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
         "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
             "PAM": "NNNNGMTT", 
-            "guideSize": 50,
+            "guideSize": 20,
             "maxMismatches": 3,
             "scoringMethod": "XU_2015"
         }
-    }   
+    }
 
-    main(event)
+    event2 = {
+        "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
+        # "ref_genome":"/home/yanghe/tmp/data_preprocessing/input/GCF_000005845.2_ASM584v2_genomic.fna",
+        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/GCF_000005845.2_ASM584v2_genomic.fna",
+        "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
+        "chopchop_config":{
+            "PAM": "NGG", 
+            "guideSize": 20,
+            "maxMismatches": 3,
+            "scoringMethod": "DOENCH_2014"
+        }
+    }
+
+    main(event2)
     
 
 
