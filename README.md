@@ -1,4 +1,20 @@
 # chopchop
+## Project Introduction 
+This project uses the output results of the upstream task module (data_processing) as input to the standardized editing area, and then encapsulates and modifies the sgRNA design tool chopshop. Finally, it can high-throughput design sgRNA for multiple editing areas simultaneously.
+
+    data = {
+        "input_file_path":"/home/XXX/tmp/data_preprocessing/output/info_input.csv",
+        "ref_genome":"/home/XXX/tmp/data_preprocessing/output/xxx.fna",
+        "chopchop_workdir":"/home/XXX/tmp/chopchop/output/", 
+        "chopchop_config":{
+            "PAM": "NNNNGMTT", 
+            "guideSize": 20,
+            "maxMismatches": 3,
+            "scoringMethod": "XU_2015"
+        }
+    }
+
+    output: "/home/yanghe/tmp/chopchop/output/sgRNA.json","/home/yanghe/tmp/chopchop/output/sgRNA.csv"
 
 
 ## Installation
@@ -16,12 +32,14 @@ pip install pandarallel
 ```
 
 ## Usage
-#在main_chopchop环境中条用chopchop环境中chopchop.py
+method1：在main_chopchop环境中调用chopchop环境中main.py
+
+method2：在aws云开发中通过Dockerfile启动容器ECR将其代码托管到lambda中使用
 
 ```shell
 
 git clone http://172.16.25.29/yangChunhe/chopchop.git
 
-python main.py -i ./data/input/config.json
+python main.py
 
 ```
