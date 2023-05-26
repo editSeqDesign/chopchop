@@ -16,7 +16,7 @@ import pickle
 import pandas
 import numpy
 import featurization as feat
-import scipy.stats as ss
+# import scipy.stats as ss
 import warnings 
 import resource
 import pandas as pd
@@ -27,7 +27,7 @@ from Bio.SeqUtils import GC
 from Bio.Restriction import Analysis, RestrictionBatch
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet.IUPAC import IUPACAmbiguousDNA
+# from Bio.Alphabet.IUPAC import IUPACAmbiguousDNA
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from operator import itemgetter, attrgetter
 from subprocess import Popen, PIPE

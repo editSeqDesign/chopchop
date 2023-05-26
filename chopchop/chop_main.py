@@ -352,7 +352,7 @@ if __name__ == '__main__':
 
     event2 = {
         "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
-        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/xxx.fna",
+        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/eco.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
             "PAM": "NGG", 
