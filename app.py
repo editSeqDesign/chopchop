@@ -20,12 +20,12 @@ from Bio import SeqIO
 print(os.environ) 
 print(os.listdir('.'))  
 
-import chop_main as mn    
+import main as mn    
 
 
 result_bucket = os.environ["s3Result"]
 reference_bucket = os.environ["s3Reference"]
-s3 = boto3.resource('s3')
+s3 = boto3.resource('s3')  
 
 def download_s3_file(s3_file, workdir):
     """
@@ -33,16 +33,14 @@ def download_s3_file(s3_file, workdir):
     :param s3_file: _description_
     :type s3_file: _type_
     :param workdir: _description_
-    :type workdir: _type_
+    :type workdir: _type_   
     """
     bucket = s3_file.split('/')[2]
     filename = s3_file.split('/')[-1]
     obj_key = '/'.join(s3_file.split('/')[3:])
     
-    local_file = os.path.join(
-        workdir,
-        filename
-    )
+    local_file = os.path.join(workdir,filename)
+    print(f'开始下载数据：从{obj_key}下载到{local_file}')
     s3.Object(bucket, obj_key).download_file(local_file)
     return local_file
 
@@ -69,7 +67,7 @@ def lambda_handler(event,context):
         }
     }
     """
-    print(event)
+    print('event:',event)
     try:
         # 读写路径
         jobid = event["jobid"]
@@ -81,15 +79,30 @@ def lambda_handler(event,context):
         event["chopchop_workdir"] = workdir
         
         #下载数据 并重置参数
-        event["input_file_path"] = download_s3_file(event["input_file_path"],workdir)
-        if event["ref_genome"].startswith('reference/'):
-                event["ref_genome"] = f"s3://{reference_bucket}/{event['ref_genome']}" 
-        event["ref_genome"] = download_s3_file(event["ref_genome"],workdir)
-        event["chopchop_config"] = event["chopchop_config"]
-          
+        input_file_path = event["input_file_path"]
+
+        if type(input_file_path) == list:
+            editor_path = input_file_path[0]   
+            genome_path = input_file_path[1]
+            print('要下载的文件：',editor_path,genome_path) 
+            editor_path = download_s3_file(editor_path, workdir)
+
+            if genome_path.startswith('reference/'):
+                genome_path = f"s3://{reference_bucket}/{genome_path}" 
+            
+            genome_path = download_s3_file(genome_path, workdir)
+            event["input_file_path"] = editor_path
+            event['ref_genome'] = genome_path
+
+        elif type(input_file_path) == str:
+            event["input_file_path"] = download_s3_file(event["input_file_path"],workdir)
+            if event["ref_genome"].startswith('reference/'): 
+                    event["ref_genome"] = f"s3://{reference_bucket}/{event['ref_genome']}"         
+            event["ref_genome"] = download_s3_file(event["ref_genome"],workdir)
+
+
+        event["chopchop_config"] = event["chopchop_config"]  
         print("event事件:",event["input_file_path"],  event["ref_genome"] ,event['chopchop_config'])
-    
-        
         output_file = mn.main(event)
         
         # 上传结果文件
@@ -138,6 +151,8 @@ if __name__ == "__main__":
             "scoringMethod": "DOENCH_2014"
         }
     }
+
+
     lambda_handler(event,{})
 
 
