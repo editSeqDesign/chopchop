@@ -309,7 +309,7 @@ def main(event):
     sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
     # sgRNA_df.rename(columns={'Name':'ID'},inplace=True)
 
-    sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]
+    # sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]
 
     #输出json
     li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)  
@@ -352,7 +352,7 @@ if __name__ == '__main__':
 
     event2 = {
         "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
-        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/eco.fna",
+        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/xxx.fna",
         "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
         "chopchop_config":{
             "PAM": "NGG", 
