@@ -20,7 +20,7 @@ from Bio import SeqIO
 print(os.environ) 
 print(os.listdir('.'))  
 
-import main as mn    
+import chop_main as mn    
 
 
 result_bucket = os.environ["s3Result"]
