@@ -365,7 +365,3 @@ if __name__ == '__main__':
     a=main(event2)
     print(a)
     
-
-
-
-
