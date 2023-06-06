@@ -296,6 +296,7 @@ def main(event):
     
     temp = df.region.apply(lambda x: call_chopchop(output,chopchop_params,x))
 
+
     # pool = mp.Pool()
     #   # 使用map函数在多个进程中调用process_region函数
     # results = pool.map(process_region, [(output,chopchop_params, region) for region in df.region])
@@ -309,7 +310,7 @@ def main(event):
     sgRNA_df = sgRNA_df.rename(columns={'name':'Name'})
     # sgRNA_df.rename(columns={'Name':'ID'},inplace=True)
 
-    # sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]
+    sgRNA_df = sgRNA_df[['Name','Rank',"Region",'Genomic location','Strand','Target sequence',"GC content (%)","MM0","MM1","MM2","MM3","Efficiency"]]  
 
     #输出json
     li_sgRNA = sgRNAdf_to_jsion(sgRNA_df)  
