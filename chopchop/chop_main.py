@@ -65,18 +65,9 @@ def excecute_one_chopchop(env,chopchop_params,parent_output):
     return temp_df
 
 
-def call_chopchop(output,chopchop_params,info_list_one):   
+def call_chopchop(output,chopchop_params,info_list_one, env):   
   
-    #env
-    env = os.environ['CONDA_PREFIX']
 
-    print(env)  
-    if 'chopchop' not in env:
-        env_path = env.split('/')
-        print(env_path)  
-        env_path[-1] = 'chopchop'
-        env = '/'.join(env_path)
-        print('env:',env)
 
     
 
@@ -129,7 +120,7 @@ def check_create_path(config):
         runbashcmd(cmd)
 
 
-def write_config(config,input_path,ref_genome,chopchop_params,output):
+def write_config(config,input_path,ref_genome,chopchop_params,output, bowtie='bowtie', twoBitToFa='twoBitToFa'):
 
     chopchop_workdir = output
 
@@ -146,8 +137,8 @@ def write_config(config,input_path,ref_genome,chopchop_params,output):
     if chopchop_workdir in config['PATH']['BOWTIE_INDEX_DIR']: 
         pass
     else:
-        config['PATH']['BOWTIE'] = 'bowtie'
-        config['PATH']['TWOBITTOFA'] = 'twoBitToFa'
+        config['PATH']['BOWTIE'] = bowtie
+        config['PATH']['TWOBITTOFA'] = twoBitToFa
         config['PATH']['TWOBIT_INDEX_DIR'] = chopchop_workdir +'/'+ config['PATH']['TWOBIT_INDEX_DIR']
         config['PATH']['PRIMER3'] = chopchop_workdir +'/'+ config['PATH']['PRIMER3']
         config['PATH']['BOWTIE_INDEX_DIR'] = chopchop_workdir +'/'+ config['PATH']['BOWTIE_INDEX_DIR'] +'/'+ config['chopchop_params']['genome_name']
@@ -252,14 +243,27 @@ def sgRNAdf_to_jsion(sgRNA):
     sgRNA.groupby(by='Region').apply(lambda x: work(x))
     return li
 
-
+  
 def main(event):
 
     #
     base_path = os.path.abspath(os.path.dirname(__file__)) + '/'
  
     print(base_path)
-    print(os.listdir(base_path))    
+    print(os.listdir(base_path))  
+
+    #env
+    if os.getenv('CONDA_PREFIX') == None:
+        env = event.get('env')
+    else:
+        env = os.environ['CONDA_PREFIX']
+        print(env)  
+        if 'chopchop' not in env:
+            env_path = env.split('/')
+            print(env_path)  
+            env_path[-1] = 'chopchop'
+            env = '/'.join(env_path)
+            print('env:',env)
 
     #parse event
     input_path = event["input_file_path"]
@@ -277,15 +281,13 @@ def main(event):
     #write config to temp
     tem_config = write_config(data, input_path, ref_genome, chopchop_params, output)
     print('temp中的config位置',tem_config)
-   
-    print("output内容",os.listdir(output))
 
     #
     df = pd.read_csv(input_path)
     #过滤无用信息
     df = filter(df,ref_genome)   
 
-    print(df.columns)
+    print(df.columns) 
   
     # info_list_one = 'CM001534.1:231516-232905'      
     # sgRNA = call_chopchop(output,base_path,chopchop_params,info_list_one)
@@ -294,7 +296,7 @@ def main(event):
     start_time = time.time()
     #parallel processing  
     
-    temp = df.region.apply(lambda x: call_chopchop(output,chopchop_params,x))
+    temp = df.region.apply(lambda x: call_chopchop(output,chopchop_params,x, env))
 
 
     # pool = mp.Pool()
@@ -339,30 +341,45 @@ if __name__ == '__main__':
 
     "XU_2015", "DOENCH_2014", "DOENCH_2016", "MORENO_MATEOS_2015", "CHARI_2015", "G_20"
 
-    event1 = {
-        "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
-        "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
-        "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
-        "chopchop_config":{
-            "PAM": "NNNNGMTT", 
-            "guideSize": 20,
-            "maxMismatches": 3,
-            "scoringMethod": "XU_2015"
-        }
-    }
 
-    event2 = {
-        "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
-        "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/xxx.fna",
-        "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
-        "chopchop_config":{
-            "PAM": "NGG", 
-            "guideSize": 20,
-            "maxMismatches": 3,
-            "scoringMethod": "DOENCH_2014"
+    # "env": "/home/yanghe/anaconda3/envs/crispr_hr_editor/"
+  
+    call_method = 2
+    if  call_method == 1:
+        event1 = {
+            "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
+            "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
+            "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
+            "chopchop_config":{
+                "PAM": "NNNNGMTT", 
+                "guideSize": 20,
+                "maxMismatches": 3,
+                "scoringMethod": "XU_2015"
+            }
         }
-    }
-
-    a=main(event2)
-    print(a)
+        event2 = {
+            "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
+            "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/xxx.fna",
+            "chopchop_workdir":"/home/yanghe/tmp/123/output/", 
+            "chopchop_config":{
+                "PAM": "NGG", 
+                "guideSize": 20,
+                "maxMismatches": 3,
+                "scoringMethod": "DOENCH_2014"
+            }
+        }
+        event = event2
     
+    elif call_method == 2:
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--input', '-i', help='input config file', required=True)   
+        arguments = parser.parse_args()
+        input_file_path = arguments.input
+
+        with open(input_file_path,'r',encoding='utf8') as fp:
+            event = json.load(fp)
+    
+
+
+    a=main(event)
+    print(a)

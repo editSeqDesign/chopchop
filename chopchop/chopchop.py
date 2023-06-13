@@ -1164,6 +1164,14 @@ def coordToFasta(regions, fasta_file, outputDir, targetSize, evalAndPrintFunc,  
         # Popen runs twoBitToFa program. PIPE pipes stdout.
         print('config---------------',CONFIG)
 
+        command = "%s -seq=%s -start=%d -end=%d %s/%s.2bit stdout 2> %s/twoBitToFa.err" % (
+            CONFIG["PATH"]["TWOBITTOFA"], chrom, start - ext, finish + ext, indexDir, genome, outputDir
+        )
+        print(command)  
+
+
+
+
         prog = Popen("%s -seq=%s -start=%d -end=%d %s/%s.2bit stdout 2> %s/twoBitToFa.err" % (
             CONFIG["PATH"]["TWOBITTOFA"], chrom, start - ext, finish + ext, indexDir, genome, outputDir), stdout=PIPE, shell=True)
 
