@@ -1236,10 +1236,14 @@ def runBowtie(PAMlength, unique_method_cong, fasta_file, output_dir,
         command = "%s -p %s -l %d -n %d -m %d --sam-nohead -k %d %s/%s -f %s -S %s " % (
             CONFIG["PATH"]["BOWTIE"], CONFIG["THREADS"], (PAMlength + 11), max_mismatches, max_off_targets, max_off_targets, index_dir,
             genome, fasta_file, bwt_results_file)
+        
+        print('1234',command)
+
+
     else:
         command = "%s -p %s -v %d --sam-nohead -k %d %s/%s -f %s -S %s  " % (
             CONFIG["PATH"]["BOWTIE"], CONFIG["THREADS"], max_mismatches, max_off_targets, index_dir, genome, fasta_file, bwt_results_file)
-        print(command)
+        print('5678',command)
 
     if ISOFORMS: # When ISFORMS we don't check reverse complement
         command += "--norc "
@@ -1398,6 +1402,8 @@ def runBowtiePrimers(primerFastaFileName, outputDir, genome, bowtieIndexDir, max
     command = "%s -v 0 --best --sam-nohead -k 10 %s/%s -f %s -S %s/primer_results.sam 2> %s/bowtie_primers.err" % (
         CONFIG["PATH"]["BOWTIE"], bowtieIndexDir, genome, primerFastaFileName, outputDir, outputDir)
     prog = Popen(command, shell = True)
+    print(9780,command)
+
     prog.wait()
 
     if prog.returncode != 0:

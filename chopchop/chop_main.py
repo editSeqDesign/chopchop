@@ -9,6 +9,27 @@ import math
 import subprocess
 from Bio import SeqIO
 import multiprocessing as mp
+
+
+
+import subprocess
+
+def conda_env_list():
+    command = ['conda', 'env', 'list']
+    result = subprocess.run(command, capture_output=True, text=True)
+    output_lines = result.stdout.strip().split('\n')[2:]  # 忽略前两行
+
+    env_dict = {}
+    for line in output_lines:
+        parts = line.split()
+        if len(parts) >= 2:
+            name = parts[0]
+            path = parts[1]
+            env_dict[name] = path
+
+    return env_dict
+
+
    
  
 def excecute_one_chopchop(env,chopchop_params,parent_output):
@@ -48,7 +69,7 @@ def excecute_one_chopchop(env,chopchop_params,parent_output):
                                         '-config',
                                         parent_output+'/'+'config.json'
                                     )   
-    # logger.info(f"cmd = {cmd}")
+    # logger.info(f"cmd = {cmd}")  
     
     print('执行的命令:',cmd)   
 
@@ -67,10 +88,6 @@ def excecute_one_chopchop(env,chopchop_params,parent_output):
 
 def call_chopchop(output,chopchop_params,info_list_one, env):   
   
-
-
-    
-
     temp_output = output +'/temp/'+info_list_one + '/'
     if not exists(temp_output):
         makedirs(temp_output)
@@ -257,14 +274,10 @@ def main(event):
         env = event.get('env')
     else:
         env = os.environ['CONDA_PREFIX']
-        print(env)  
-        if 'chopchop' not in env:
-            env_path = env.split('/')
-            print(env_path)  
-            env_path[-1] = 'chopchop'
-            env = '/'.join(env_path)
-            print('env:',env)
-
+        if os.path.basename(  env ) != 'chopchop':
+            env = conda_env_list()['chopchop']
+            print(env)
+        
     #parse event
     input_path = event["input_file_path"]
     ref_genome = event["ref_genome"] 
