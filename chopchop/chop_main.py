@@ -30,8 +30,6 @@ def conda_env_list():
     return env_dict
 
 
-   
- 
 def excecute_one_chopchop(env,chopchop_params,parent_output):
     
     env = env
@@ -357,14 +355,14 @@ if __name__ == '__main__':
 
     # "env": "/home/yanghe/anaconda3/envs/crispr_hr_editor/"
   
-    call_method = 2
+    call_method = 1
     if  call_method == 1:
         event1 = {
             "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
             "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
             "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
             "chopchop_config":{
-                "PAM": "NNNNGMTT", 
+                "PAM": "NGG", 
                 "guideSize": 20,
                 "maxMismatches": 3,
                 "scoringMethod": "XU_2015"
@@ -373,7 +371,7 @@ if __name__ == '__main__':
         event2 = {
             "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
             "ref_genome":"/home/yanghe/tmp/data_preprocessing/output/xxx.fna",
-            "chopchop_workdir":"/home/yanghe/tmp/123/output/", 
+            "chopchop_workdir":"/home/yanghe/tmp/chopchop/output/", 
             "chopchop_config":{
                 "PAM": "NGG", 
                 "guideSize": 20,
@@ -381,7 +379,7 @@ if __name__ == '__main__':
                 "scoringMethod": "DOENCH_2014"
             }
         }
-        event = event2
+        event = event1
     
     elif call_method == 2:
         parser = argparse.ArgumentParser()
