@@ -356,7 +356,7 @@ if __name__ == '__main__':
     # "env": "/home/yanghe/anaconda3/envs/crispr_hr_editor/"
   
     call_method = 1
-    if  call_method == 1:
+    if  call_method == 1:  
         event1 = {
             "input_file_path":"/home/yanghe/tmp/data_preprocessing/output/info_input.csv",
             "ref_genome":"/home/yanghe/program/data_preprocessing/input/GCA_000011325.1_ASM1132v1_genomic.fna",
@@ -379,7 +379,7 @@ if __name__ == '__main__':
                 "scoringMethod": "DOENCH_2014"
             }
         }
-        event = event1
+        event = event2
     
     elif call_method == 2:
         parser = argparse.ArgumentParser()
