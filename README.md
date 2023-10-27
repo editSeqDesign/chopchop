@@ -1,8 +1,49 @@
 # chopchop
 ## Project Introduction 
-This project uses the output results of the upstream task module (data_processing) as input to the standardized editing area, and then encapsulates and modifies the sgRNA design tool chopshop. Finally, it can high-throughput design sgRNA for multiple editing areas simultaneously.
+As the sgRNA design module of AutoESDCas, chopshop's main function is to high-throughput complete sgRNA design by calling the core algorithm of the original chopshop sgRNA design.
 
-    data = {
+
+## Installation
+The installation of the original chopshop requires the establishment of a virtual environment for Python 2.7, as well as the installation of tools such as Bowtie and twoBitToFa. On this basis, the virtual environment of python 3.8 and the installation of its related packages are established, and the original chop shop of the python 2.7 environment is finally called in the python 3.8 environment.
+
+### python packages
+We suggest using Python 3.8 and  Python 2.7 for chopchop.
+
+**Python 2.7:**
+```shell
+pip install -r chopchop_requirements.txt
+```
+
+### Bowtie
+```
+wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1/bowtie-1.3.1-linux-x86_64.zip -O /opt/bowtie.zip && \
+    unzip /opt/bowtie.zip -d /opt/ && \
+    mv /opt/bowtie-1.3.1-linux-x86_64  /opt/bowtie && \
+    rm /opt/bowtie.zip
+export PATH=~/software/bowtie/:$PATH
+```
+
+### twoBitToFa
+```
+RUN wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/twoBitToFa -O /opt/twoBitToFa
+export PATH=~/software/twoBitToFa/:$PATH
+```
+
+**Python 3.8:**
+```shell
+pip install -r requirements.txt
+```
+
+## Usage & Example
+
+**Input:**
+- **Step 1:** Upload the genome (fna) file and data preprocessed (CSV) file.
+
+- **Step 2:** Configure relevant parameters for sgRNA design
+
+    - Example configuration (data):
+    ```json
+    {
         "input_file_path":"/home/XXX/tmp/data_preprocessing/output/info_input.csv",
         "ref_genome":"/home/XXX/tmp/data_preprocessing/output/xxx.fna",
         "chopchop_workdir":"/home/XXX/tmp/chopchop/output/", 
@@ -13,33 +54,20 @@ This project uses the output results of the upstream task module (data_processin
             "scoringMethod": "XU_2015"
         }
     }
+    ```
 
-    output: "/home/yanghe/tmp/chopchop/output/sgRNA.json","/home/yanghe/tmp/chopchop/output/sgRNA.csv"
 
-
-## Installation
-
+**Execute:**
 ```shell
-
-#创建python2.7环境
-conda env create -f chopchop.yaml
-
-#创建python3.8环境
-conda env create -n main_chopchop python==3.8
-conda install ucsc-fatotwobit
-pip install pandas
-pip install pandarallel
+python chopchop_main.py
 ```
 
-## Usage
-method1：在main_chopchop环境中调用chopchop环境中main.py
+**Output:**
+- `sgRNA.json` 
+- `sgRNA.csv` 
 
-method2：在aws云开发中通过Dockerfile启动容器ECR将其代码托管到lambda中使用
+These files will be generated in the `/home/XXX/tmp/chopchop/output/` directory.
 
-```shell
 
-git clone http://172.16.25.29/yangChunhe/chopchop.git
 
-python main.py
 
-```

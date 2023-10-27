@@ -1,5 +1,12 @@
+# -*- coding:utf-8 -*-
+# @FileName     :chop_main.py
+# @Time         :2023/10/27 15:21:18
+# @Author       :YangChunhe
+# @Email        :2393492851@qq.com
+# @Description  :file content
+
 import os,sys
-from os import makedirs
+from os import makedirs  
 import pandas as pd
 from os.path import exists,splitext,dirname,splitext,basename,realpath,abspath
 os.getcwd()
